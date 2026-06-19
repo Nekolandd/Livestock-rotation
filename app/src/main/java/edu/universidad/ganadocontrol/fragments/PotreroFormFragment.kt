@@ -220,14 +220,17 @@ class PotreroFormFragment : Fragment() {
     private fun playVideo() {
         if (!currentVideoPath.isNullOrEmpty()) {
             try {
-                // Deshabilitar VmPolicy para permitir file:// Uri en intents sin FileProvider
-                val builder = android.os.StrictMode.VmPolicy.Builder()
-                android.os.StrictMode.setVmPolicy(builder.build())
-
                 val file = File(currentVideoPath!!)
                 if (file.exists()) {
+                    val context = requireContext()
+                    val videoUri = androidx.core.content.FileProvider.getUriForFile(
+                        context,
+                        "${context.packageName}.fileprovider",
+                        file
+                    )
                     val intent = Intent(Intent.ACTION_VIEW).apply {
-                        setDataAndType(android.net.Uri.fromFile(file), "video/*")
+                        setDataAndType(videoUri, "video/*")
+                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                     }
                     startActivity(intent)
                 } else {

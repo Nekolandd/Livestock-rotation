@@ -61,16 +61,45 @@ class PotrerosListFragment : Fragment() {
         val dao = db.ganadoDao()
         var potrerosList = dao.getAllPotreros()
 
-        // Si la lista está vacía, registrar 5 potreros por defecto
+        // Si la lista está vacía, registrar 5 potreros por defecto e históricos de prueba
         if (potrerosList.isEmpty()) {
             val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             val currentDate = sdf.format(Date())
 
-            dao.insertPotrero(Potrero("Potrero El Establo", 5000.0, currentDate, null, null))
-            dao.insertPotrero(Potrero("Potrero La Colina", 7200.0, currentDate, null, null))
-            dao.insertPotrero(Potrero("Potrero Las Palmas", 6100.0, currentDate, null, null))
-            dao.insertPotrero(Potrero("Potrero Río Claro", 4800.0, currentDate, null, null))
-            dao.insertPotrero(Potrero("Potrero La Vega", 8500.0, currentDate, null, null))
+            val id1 = dao.insertPotrero(Potrero("Potrero El Establo", 5000.0, currentDate, null, null)).toInt()
+            val id2 = dao.insertPotrero(Potrero("Potrero La Colina", 7200.0, currentDate, null, null)).toInt()
+            val id3 = dao.insertPotrero(Potrero("Potrero Las Palmas", 6100.0, currentDate, null, null)).toInt()
+            val id4 = dao.insertPotrero(Potrero("Potrero Río Claro", 4800.0, currentDate, null, null)).toInt()
+            val id5 = dao.insertPotrero(Potrero("Potrero La Vega", 8500.0, currentDate, null, null)).toInt()
+
+            // Generar fechas relativas para los estados
+            val oneDayMs = 24 * 60 * 60 * 1000L
+            val cal = java.util.Calendar.getInstance()
+            cal.set(java.util.Calendar.HOUR_OF_DAY, 0)
+            cal.set(java.util.Calendar.MINUTE, 0)
+            cal.set(java.util.Calendar.SECOND, 0)
+            cal.set(java.util.Calendar.MILLISECOND, 0)
+            val todayMs = cal.timeInMillis
+
+            // 1. Potrero El Establo: Con ganado (Rojo). Empezó hace 2 días.
+            val startRed = todayMs - 2 * oneDayMs
+            val rotRed = edu.universidad.ganadocontrol.database.HistoricoRotacion(
+                id1,
+                startRed,
+                startRed + 5 * oneDayMs,
+                startRed + 20 * oneDayMs
+            )
+            dao.insertRotacion(rotRed)
+
+            // 2. Potrero La Colina: En descanso (Anaranjado). Empezó hace 10 días.
+            val startOrange = todayMs - 10 * oneDayMs
+            val rotOrange = edu.universidad.ganadocontrol.database.HistoricoRotacion(
+                id2,
+                startOrange,
+                startOrange + 5 * oneDayMs,
+                startOrange + 20 * oneDayMs
+            )
+            dao.insertRotacion(rotOrange)
 
             potrerosList = dao.getAllPotreros()
         }

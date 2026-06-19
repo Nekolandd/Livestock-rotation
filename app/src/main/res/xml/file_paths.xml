@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Expose external cache dir where photo and video files are captured -->
+    <external-cache-path name="external_cache" path="." />
+    <!-- Expose internal cache dir for general safety -->
+    <cache-path name="cache" path="." />
+</paths>
